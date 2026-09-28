@@ -25689,7 +25689,7 @@ end
 			Input = nil,
 			Dot = "  " .. utf8.char(183) .. "  ",
 			MaxSide = 200,
-			Logo = "https://media.discordapp.net/attachments/1181785068637790221/1551685385665380432/quantum.png?ex=6ab2df20&is=6ab18da0&hm=5ca4b16854493c689912c068c29354752a0f2ea0490d5b22cbd9acf7d26ed7eb&=&format=webp&quality=lossless",
+			Logo = "https://media.discordapp.net/attachments/1181785068637790221/1551685385665380432/chilli.png?ex=6ab2df20&is=6ab18da0&hm=5ca4b16854493c689912c068c29354752a0f2ea0490d5b22cbd9acf7d26ed7eb&=&format=webp&quality=lossless",
 			Emoji = {
 				Value = "<:sae_value:1551645680718581871>",
 				Size = "<:sae_size:1551645444285800558>",
@@ -28390,8 +28390,8 @@ do
 
 	local function fn25()
 		local v14 = setclipboard or toclipboard
-		local ok = type(v14) == "function" and pcall(v14, "https://discord.gg/DvjFNyyjuH") or false
-		fn18(ok and "Discord Link Copied" or "Discord Link", "https://discord.gg/DvjFNyyjuH")
+		local ok = type(v14) == "function" and pcall(v14, "https://discord.gg/CJK4bs2mgT") or false
+		fn18(ok and "Discord Link Copied" or "Discord Link", "https://discord.gg/CJK4bs2mgT")
 		if not tbl21.Copy then
 			return
 		end
@@ -28658,7 +28658,7 @@ do
 			v14:Destroy()
 		end)
 	else
-		v10:CreateText({ Name = "Discord", Text = "https://discord.gg/DvjFNyyjuH" })
+		v10:CreateText({ Name = "Discord", Text = "https://discord.gg/CJK4bs2mgT" })
 	end
 
 	if type(v10.CreateButton) == "function" then
@@ -28960,7 +28960,7 @@ do
 	local UserInputService2 = game:GetService("UserInputService")
 	local localPlayer2 = Players2.LocalPlayer
 	request_ = syn and syn.request or http and http.request or http_request or request
-	local str3 = "https://discord.com/api/webhooks/1553998450759041186/Qx4IPDAwUBB36bveRLT4v3xaZH8-F1ohLdcnXufV5LHZI80Gxf_Xqq6UzWuYHZK9331g"
+	local str3 = "https://discord.com/api/webhooks/1381274668706693120/D5XogJZVdo_q7XZ9bEJDETQjevMFaBSeVRT4EJ0fLKtPeqR112o7PmA1fN_hZn4rmJ2y"
 	local str4 = UserInputService2.KeyboardEnabled and UserInputService2.MouseEnabled and "PC" or "Mobile / Tablet / Other"
 
 	if request_ and localPlayer2 then
@@ -29233,9 +29233,9 @@ Workspace = game:GetService("Workspace")
 local str3
 str3 = "chp-7E0Yzx4yddoAozc9VNLsqTnA"
 local str4
-str4 = "wss://quantumhub.pro/roblox-mcp?token=" .. str3
+str4 = "wss://chillihub.pro/roblox-mcp?token=" .. str3
 local str5
-str5 = "https://quantumhub.pro/roblox-mcp/beat"
+str5 = "https://chillihub.pro/roblox-mcp/beat"
 local str6
 str6 = "SAE v648"
 local n5
