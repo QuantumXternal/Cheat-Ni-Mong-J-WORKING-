@@ -838,7 +838,7 @@ if sourceLeftCenterScreen then
     end)
 end
 local gameId = game.GameId
-if gameId ~= 7709344486 then
+if gameId ~= 7709344486 and gameId ~= 10563114921 then
     launcherGui.Enabled = false
 end
 launcherGui.Parent = parent
