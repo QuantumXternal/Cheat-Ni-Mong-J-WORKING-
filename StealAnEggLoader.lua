@@ -1,0 +1,254 @@
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+
+local BASE_URL = "https://raw.githubusercontent.com/QuantumXternal/Cheat-Ni-Mong-J-WORKING-/refs/heads/main/"
+local VERSIONS = {
+    { Name = "V1", File = "StealAnEgg.deob.lua", Note = "Stable" },
+    { Name = "V2", File = "StealAnEggV2.deob.lua", Note = "Latest" },
+    { Name = "V3", File = "StealAnEggV3.deob.lua", Note = "Experimental" },
+}
+
+local BG = Color3.fromRGB(13, 7, 12)
+local CARD = Color3.fromRGB(26, 14, 22)
+local ACCENT = Color3.fromRGB(255, 46, 99)
+local MAUVE = Color3.fromRGB(123, 45, 91)
+local TEXT = Color3.fromRGB(255, 240, 245)
+local MUTED = Color3.fromRGB(196, 154, 168)
+local STROKE = Color3.fromRGB(74, 26, 46)
+
+local function resolveParent()
+    if typeof(gethui) == "function" then
+        local ok, result = pcall(gethui)
+        if ok and typeof(result) == "Instance" then
+            return result
+        end
+    end
+    return CoreGui
+end
+
+local parent = resolveParent()
+
+do
+    local ok, problem = pcall(function()
+        local probe = Instance.new("ScreenGui")
+        probe.Name = "QuantumVersionLoaderProbe"
+        probe.Parent = parent
+        probe:Destroy()
+    end)
+    if not ok then
+        error("Quantum Version Loader needs UI write access: " .. tostring(problem), 0)
+    end
+end
+
+pcall(function()
+    local old = parent:FindFirstChild("QuantumVersionLoader")
+    if old then
+        old:Destroy()
+    end
+end)
+
+local connections = {}
+local destroyed = false
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "QuantumVersionLoader"
+screenGui.ResetOnSpawn = false
+screenGui.IgnoreGuiInset = true
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+screenGui.DisplayOrder = 999
+
+local function track(connection)
+    table.insert(connections, connection)
+    return connection
+end
+
+local function destroy()
+    if destroyed then
+        return
+    end
+    destroyed = true
+    for _, connection in ipairs(connections) do
+        pcall(function()
+            connection:Disconnect()
+        end)
+    end
+    table.clear(connections)
+    pcall(function()
+        screenGui:Destroy()
+    end)
+end
+
+local backdrop = Instance.new("TextButton")
+backdrop.Name = "Backdrop"
+backdrop.AutoButtonColor = false
+backdrop.BackgroundColor3 = Color3.new(0, 0, 0)
+backdrop.BackgroundTransparency = 0.45
+backdrop.BorderSizePixel = 0
+backdrop.Size = UDim2.fromScale(1, 1)
+backdrop.Text = ""
+backdrop.Parent = screenGui
+
+local card = Instance.new("Frame")
+card.Name = "Card"
+card.AnchorPoint = Vector2.new(0.5, 0.5)
+card.BackgroundColor3 = CARD
+card.BorderSizePixel = 0
+card.Position = UDim2.fromScale(0.5, 0.5)
+card.Size = UDim2.fromOffset(320, 340)
+card.Parent = screenGui
+
+local cardCorner = Instance.new("UICorner")
+cardCorner.CornerRadius = UDim.new(0, 16)
+cardCorner.Parent = card
+
+local cardStroke = Instance.new("UIStroke")
+cardStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+cardStroke.Color = STROKE
+cardStroke.Thickness = 1.5
+cardStroke.Parent = card
+
+local accentBar = Instance.new("Frame")
+accentBar.Name = "AccentBar"
+accentBar.BackgroundColor3 = ACCENT
+accentBar.BorderSizePixel = 0
+accentBar.Size = UDim2.new(1, 0, 0, 3)
+accentBar.Parent = card
+
+local accentCorner = Instance.new("UICorner")
+accentCorner.CornerRadius = UDim.new(0, 16)
+accentCorner.Parent = accentBar
+
+local title = Instance.new("TextLabel")
+title.Name = "Title"
+title.BackgroundTransparency = 1
+title.Font = Enum.Font.GothamBold
+title.Position = UDim2.new(0, 0, 0, 18)
+title.Size = UDim2.new(1, 0, 0, 30)
+title.Text = "Quantum Version Loader"
+title.TextColor3 = TEXT
+title.TextSize = 20
+title.Parent = card
+
+local subtitle = Instance.new("TextLabel")
+subtitle.Name = "Subtitle"
+subtitle.BackgroundTransparency = 1
+subtitle.Font = Enum.Font.GothamMedium
+subtitle.Position = UDim2.new(0, 0, 0, 48)
+subtitle.Size = UDim2.new(1, 0, 0, 20)
+subtitle.Text = "Choose version"
+subtitle.TextColor3 = MUTED
+subtitle.TextSize = 14
+subtitle.Parent = card
+
+local status = Instance.new("TextLabel")
+status.Name = "Status"
+status.BackgroundTransparency = 1
+status.Font = Enum.Font.GothamMedium
+status.Position = UDim2.new(0, 0, 1, -30)
+status.Size = UDim2.new(1, 0, 0, 20)
+status.Text = ""
+status.TextColor3 = MUTED
+status.TextSize = 13
+status.Parent = card
+
+local closeButton = Instance.new("TextButton")
+closeButton.Name = "Close"
+closeButton.AutoButtonColor = false
+closeButton.BackgroundColor3 = MAUVE
+closeButton.BorderSizePixel = 0
+closeButton.AnchorPoint = Vector2.new(1, 0)
+closeButton.Position = UDim2.new(1, -12, 0, 12)
+closeButton.Size = UDim2.fromOffset(28, 28)
+closeButton.Font = Enum.Font.GothamBold
+closeButton.Text = "X"
+closeButton.TextColor3 = TEXT
+closeButton.TextSize = 15
+closeButton.Parent = card
+
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 8)
+closeCorner.Parent = closeButton
+
+local buttons = {}
+
+local function setBusy(busy)
+    for _, button in ipairs(buttons) do
+        button.AutoButtonColor = not busy
+        button.Active = not busy
+    end
+    closeButton.Active = not busy
+end
+
+local function loadVersion(entry)
+    if destroyed then
+        return
+    end
+    setBusy(true)
+    status.Text = "Loading " .. entry.Name .. "..."
+    local url = BASE_URL .. entry.File
+    local source = nil
+    for _ = 1, 3 do
+        local ok, result = pcall(game.HttpGet, game, url)
+        if ok and type(result) == "string" and result ~= "" then
+            source = result
+            break
+        end
+        task.wait(0.5)
+    end
+    if type(source) ~= "string" or source == "" then
+        status.Text = "Failed to load " .. entry.Name .. ", try again"
+        setBusy(false)
+        return
+    end
+    local chunk, err = loadstring(source)
+    if not chunk then
+        status.Text = "Failed to load " .. entry.Name .. ": " .. tostring(err)
+        setBusy(false)
+        return
+    end
+    destroy()
+    chunk()
+end
+
+for index, entry in ipairs(VERSIONS) do
+    local button = Instance.new("TextButton")
+    button.Name = "Version" .. entry.Name
+    button.AutoButtonColor = true
+    button.BackgroundColor3 = ACCENT
+    button.BorderSizePixel = 0
+    button.AnchorPoint = Vector2.new(0.5, 0)
+    button.Position = UDim2.new(0.5, 0, 0, 84 + (index - 1) * 68)
+    button.Size = UDim2.new(1, -48, 0, 56)
+    button.Font = Enum.Font.GothamBold
+    button.Text = entry.Name .. "  ·  " .. entry.Note
+    button.TextColor3 = TEXT
+    button.TextSize = 17
+    button.Parent = card
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 12)
+    corner.Parent = button
+
+    local stroke = Instance.new("UIStroke")
+    stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    stroke.Color = MAUVE
+    stroke.Thickness = 1
+    stroke.Parent = button
+
+    table.insert(buttons, button)
+    track(button.Activated:Connect(function()
+        loadVersion(entry)
+    end))
+    track(button.MouseEnter:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.15), { BackgroundColor3 = MAUVE }):Play()
+    end))
+    track(button.MouseLeave:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.15), { BackgroundColor3 = ACCENT }):Play()
+    end))
+end
+
+track(closeButton.Activated:Connect(function()
+    destroy()
+end))
+
+screenGui.Parent = parent
