@@ -1,5 +1,6 @@
 local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
 
 local BASE_URL = "https://raw.githubusercontent.com/QuantumXternal/Cheat-Ni-Mong-J-WORKING-/refs/heads/main/"
 local VERSIONS = {
@@ -168,6 +169,75 @@ closeButton.Parent = card
 local closeCorner = Instance.new("UICorner")
 closeCorner.CornerRadius = UDim.new(0, 8)
 closeCorner.Parent = closeButton
+
+local dragStrip = Instance.new("TextButton")
+dragStrip.Name = "DragStrip"
+dragStrip.AutoButtonColor = false
+dragStrip.BackgroundTransparency = 1
+dragStrip.BorderSizePixel = 0
+dragStrip.Position = UDim2.new(0, 0, 0, 0)
+dragStrip.Size = UDim2.new(1, -52, 0, 70)
+dragStrip.Text = ""
+dragStrip.Active = true
+dragStrip.ZIndex = 4
+dragStrip.Parent = card
+
+local dragging = false
+local dragStart = nil
+local cardStart = nil
+
+local function clampCardPosition(position)
+    local camera = workspace.CurrentCamera
+    local viewport = camera and camera.ViewportSize or Vector2.new(1280, 720)
+    if viewport.X < 1 or viewport.Y < 1 then
+        viewport = Vector2.new(1280, 720)
+    end
+    local centerX = viewport.X * 0.5 + position.X.Offset
+    local centerY = viewport.Y * 0.5 + position.Y.Offset
+    centerX = math.clamp(centerX, 40, math.max(41, viewport.X - 40))
+    centerY = math.clamp(centerY, 20, math.max(21, viewport.Y - 20))
+    return UDim2.new(position.X.Scale, centerX - viewport.X * 0.5, position.Y.Scale, centerY - viewport.Y * 0.5)
+end
+
+track(dragStrip.InputBegan:Connect(function(input)
+    if destroyed then
+        return
+    end
+    if input.UserInputType == Enum.UserInputType.MouseButton1
+        or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        cardStart = card.Position
+    end
+end))
+
+track(UserInputService.InputChanged:Connect(function(input)
+    if not dragging or destroyed then
+        return
+    end
+    if input.UserInputType == Enum.UserInputType.MouseMovement
+        or input.UserInputType == Enum.UserInputType.Touch then
+        if dragStart == nil or cardStart == nil then
+            return
+        end
+        local delta = input.Position - dragStart
+        card.Position = clampCardPosition(UDim2.new(
+            cardStart.X.Scale,
+            cardStart.X.Offset + delta.X,
+            cardStart.Y.Scale,
+            cardStart.Y.Offset + delta.Y
+        ))
+    end
+end))
+
+track(UserInputService.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1
+        or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = false
+        dragStart = nil
+        cardStart = nil
+    end
+end))
 
 local buttons = {}
 
