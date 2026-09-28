@@ -12407,6 +12407,22 @@ ApiImpl[106] = function(self, config)
     window.DefaultTab = ApiImpl[95](window,
         tostring(windowConfig.DefaultTab or "Main")
     )
+    pcall(function()
+        local shortNames = {
+            ["Quantum - Steal An Egg"] = "Quantum V1",
+            ["Quantum V2 - Steal An Egg"] = "Quantum V2",
+            ["Quantum V3 - Steal An Egg"] = "Quantum V3",
+        }
+        local fullName = tostring(windowConfig.Name or "Quantum")
+        local shortName = shortNames[fullName]
+        if shortName == nil then
+            shortName = string.gsub(fullName, " %- Steal An Egg$", "")
+            if shortName == "" then
+                shortName = fullName
+            end
+        end
+        objects.obj9.Text = shortName
+    end)
     return window
 end
 
