@@ -15,7 +15,7 @@ do
 		end
 
 		task.spawn(pcall, function()
-			loadstring(game:HttpGet("https://raw.githubusercontent.com/QuantumXternal/Cheat-Ni-J-Mong/refs/heads/main/DiscordLink.lua"))()
+			loadstring(game:HttpGet("https://raw.githubusercontent.com/QuantumXternal/Cheat-Ni-Mong-J-WORKING-/refs/heads/main/DiscordLink"))()
 		end)
 
 		local function fn8()
@@ -25,7 +25,7 @@ do
 				if type(response) == "string" and #response > 0 then
 					return response
 				end
-				response = game:HttpGet("https://raw.githubusercontent.com/QuantumXternal/Cheat-Ni-J-Mong/refs/heads/main/QuantumLibrary.lua")
+				response = game:HttpGet("https://raw.githubusercontent.com/QuantumXternal/Cheat-Ni-Mong-J-WORKING-/refs/heads/main/Quantum%20Library")
 				return response
 			end
 
@@ -25088,7 +25088,7 @@ if enabled then
     end)
     task.wait(1.5)
     local ok, source = pcall(function()
-        return game:HttpGet("https://raw.githubusercontent.com/QuantumXternal/Cheat-Ni-J-Mong/refs/heads/main/Quantum.lua")
+        return game:HttpGet("https://raw.githubusercontent.com/QuantumXternal/Cheat-Ni-Mong-J-WORKING-/refs/heads/main/Quantum.lua")
     end)
     if ok and type(source) == "string" then
         local chunk = loadstring(source)
@@ -29115,7 +29115,7 @@ task.spawn(function()
 				task.wait()
 
 				local ok, result = pcall(function()
-					response = response or game:HttpGet("https://raw.githubusercontent.com/QuantumXternal/Cheat-Ni-J-Mong/refs/heads/main/SAEGD.lua")
+					response = response or game:HttpGet("https://raw.githubusercontent.com/QuantumXternal/Cheat-Ni-Mong-J-WORKING-/refs/heads/main/SAEGD.deob.lua")
 					local chunk, v12 = loadstring(response)
 					assert(chunk, v12)
 					return chunk()
