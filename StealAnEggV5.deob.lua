@@ -31868,7 +31868,7 @@ end
 
 do
 	local v15 = v2:CreateTab({ Name = "Discord", Side = "Right", SectionsExpanded = true }):CreateSection({ Name = "Community", Expanded = true })
-	local str = "discord.gg/CJK4bs2mgT"
+	local str = "discord.gg/DvjFNyyjuH"
 	local str2 = "rbxassetid://128961717706452"
 	local n14 = 0.5
 	local n15 = 0.0909
@@ -31930,8 +31930,8 @@ do
 
 	local function fn19()
 		local v19 = setclipboard or toclipboard
-		local ok = type(v19) == "function" and pcall(v19, "https://discord.gg/CJK4bs2mgT") or false
-		fn15(ok and "Discord Link Copied" or "Discord Link", "https://discord.gg/CJK4bs2mgT")
+		local ok = type(v19) == "function" and pcall(v19, "https://discord.gg/DvjFNyyjuH") or false
+		fn15(ok and "Discord Link Copied" or "Discord Link", "https://discord.gg/DvjFNyyjuH")
 		if not tbl24.Copy then
 			return
 		end
@@ -32199,7 +32199,7 @@ do
 			v19:Destroy()
 		end)
 	else
-		v15:CreateText({ Name = "Discord", Text = "https://discord.gg/CJK4bs2mgT" })
+		v15:CreateText({ Name = "Discord", Text = "https://discord.gg/DvjFNyyjuH" })
 	end
 
 	if type(v15.CreateButton) == "function" then
