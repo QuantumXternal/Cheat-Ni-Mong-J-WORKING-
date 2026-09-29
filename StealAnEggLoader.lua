@@ -96,7 +96,7 @@ card.AnchorPoint = Vector2.new(0.5, 0.5)
 card.BackgroundColor3 = CARD
 card.BorderSizePixel = 0
 card.Position = UDim2.fromScale(0.5, 0.5)
-card.Size = UDim2.fromOffset(320, 408)
+card.Size = UDim2.fromOffset(300, 330)
 card.Parent = screenGui
 
 local cardCorner = Instance.new("UICorner")
@@ -240,21 +240,77 @@ track(UserInputService.InputEnded:Connect(function(input)
     end
 end))
 
-local buttons = {}
+local listFrame = Instance.new("ScrollingFrame")
+listFrame.Name = "VersionList"
+listFrame.BackgroundTransparency = 1
+listFrame.BorderSizePixel = 0
+listFrame.AnchorPoint = Vector2.new(0.5, 0)
+listFrame.Position = UDim2.new(0.5, 0, 0, 76)
+listFrame.Size = UDim2.new(1, -48, 1, -(76 + 36))
+listFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+listFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+listFrame.ScrollingDirection = Enum.ScrollingDirection.Y
+listFrame.ScrollingEnabled = true
+listFrame.ScrollBarThickness = 4
+listFrame.ScrollBarImageColor3 = MAUVE
+listFrame.ScrollBarImageTransparency = 0.4
+listFrame.VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar
+listFrame.Parent = card
 
-local function setBusy(busy)
-    for _, button in ipairs(buttons) do
-        button.AutoButtonColor = not busy
+local listLayout = Instance.new("UIListLayout")
+listLayout.FillDirection = Enum.FillDirection.Vertical
+listLayout.SortOrder = Enum.SortOrder.LayoutOrder
+listLayout.Padding = UDim.new(0, 10)
+listLayout.Parent = listFrame
+
+local ROW_MIN = 44
+local ROW_PAD = 10
+local rowHeight = ROW_MIN
+do
+    local count = math.max(#VERSIONS, 1)
+    local visibleH = 330 - 76 - 36
+    local fit = math.floor((visibleH - ROW_PAD * (count - 1)) / count)
+    if fit > ROW_MIN then
+        rowHeight = fit
+    end
+end
+
+local DIM_BG = Color3.fromRGB(52, 28, 44)
+local PRESS_BG = Color3.fromRGB(176, 32, 70)
+
+local buttons = {}
+local rows = {}
+
+local function setBusy(busy, activeIndex)
+    for index, row in ipairs(rows) do
+        local button = row.button
+        button.AutoButtonColor = false
         button.Active = not busy
+        row.busy = busy
+        if busy then
+            button.BackgroundColor3 = DIM_BG
+            row.name.TextTransparency = 0.4
+            row.note.TextTransparency = 0.4
+            row.chev.TextTransparency = 0.4
+            if index == activeIndex then
+                row.note.Text = "Loading..."
+            end
+        else
+            button.BackgroundColor3 = ACCENT
+            row.name.TextTransparency = 0
+            row.note.TextTransparency = 0
+            row.chev.TextTransparency = 0
+            row.note.Text = VERSIONS[index].Note
+        end
     end
     closeButton.Active = not busy
 end
 
-local function loadVersion(entry)
+local function loadVersion(entry, entryIndex)
     if destroyed then
         return
     end
-    setBusy(true)
+    setBusy(true, entryIndex)
     status.Text = "Loading " .. entry.Name .. "..."
     local url = BASE_URL .. entry.File
     local source = nil
@@ -284,17 +340,14 @@ end
 for index, entry in ipairs(VERSIONS) do
     local button = Instance.new("TextButton")
     button.Name = "Version" .. entry.Name
-    button.AutoButtonColor = true
+    button.AutoButtonColor = false
     button.BackgroundColor3 = ACCENT
     button.BorderSizePixel = 0
-    button.AnchorPoint = Vector2.new(0.5, 0)
-    button.Position = UDim2.new(0.5, 0, 0, 84 + (index - 1) * 68)
-    button.Size = UDim2.new(1, -48, 0, 56)
-    button.Font = Enum.Font.GothamBold
-    button.Text = entry.Name .. "  ·  " .. entry.Note
-    button.TextColor3 = TEXT
-    button.TextSize = 17
-    button.Parent = card
+    button.Size = UDim2.new(1, 0, 0, rowHeight)
+    button.LayoutOrder = index
+    button.Text = ""
+    button.Active = true
+    button.Parent = listFrame
 
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, 12)
@@ -306,15 +359,91 @@ for index, entry in ipairs(VERSIONS) do
     stroke.Thickness = 1
     stroke.Parent = button
 
+    local nameLabel = Instance.new("TextLabel")
+    nameLabel.Name = "Name"
+    nameLabel.BackgroundTransparency = 1
+    nameLabel.BorderSizePixel = 0
+    nameLabel.Position = UDim2.new(0, 14, 0, 4)
+    nameLabel.Size = UDim2.new(1, -48, 0, 20)
+    nameLabel.Font = Enum.Font.GothamBold
+    nameLabel.Text = entry.Name
+    nameLabel.TextColor3 = TEXT
+    nameLabel.TextSize = 16
+    nameLabel.TextXAlignment = Enum.TextXAlignment.Left
+    nameLabel.Parent = button
+
+    local noteLabel = Instance.new("TextLabel")
+    noteLabel.Name = "Note"
+    noteLabel.BackgroundTransparency = 1
+    noteLabel.BorderSizePixel = 0
+    noteLabel.Position = UDim2.new(0, 14, 0, 24)
+    noteLabel.Size = UDim2.new(1, -48, 0, 15)
+    noteLabel.Font = Enum.Font.GothamMedium
+    noteLabel.Text = entry.Note
+    noteLabel.TextColor3 = MUTED
+    noteLabel.TextSize = 12
+    noteLabel.TextXAlignment = Enum.TextXAlignment.Left
+    noteLabel.Parent = button
+
+    local chevLabel = Instance.new("TextLabel")
+    chevLabel.Name = "Chev"
+    chevLabel.BackgroundTransparency = 1
+    chevLabel.BorderSizePixel = 0
+    chevLabel.AnchorPoint = Vector2.new(1, 0.5)
+    chevLabel.Position = UDim2.new(1, -12, 0.5, 0)
+    chevLabel.Size = UDim2.fromOffset(20, 20)
+    chevLabel.Font = Enum.Font.GothamBold
+    chevLabel.Text = ">"
+    chevLabel.TextColor3 = MUTED
+    chevLabel.TextSize = 18
+    chevLabel.Parent = button
+
+    local row = {
+        button = button,
+        name = nameLabel,
+        note = noteLabel,
+        chev = chevLabel,
+        hovering = false,
+        pressed = false,
+        busy = false,
+    }
+    rows[index] = row
     table.insert(buttons, button)
     track(button.Activated:Connect(function()
-        loadVersion(entry)
+        loadVersion(entry, index)
     end))
     track(button.MouseEnter:Connect(function()
-        TweenService:Create(button, TweenInfo.new(0.15), { BackgroundColor3 = MAUVE }):Play()
+        row.hovering = true
+        if row.busy or row.pressed or destroyed then
+            return
+        end
+        TweenService:Create(button, TweenInfo.new(0.12), { BackgroundColor3 = MAUVE }):Play()
     end))
     track(button.MouseLeave:Connect(function()
-        TweenService:Create(button, TweenInfo.new(0.15), { BackgroundColor3 = ACCENT }):Play()
+        row.hovering = false
+        row.pressed = false
+        if row.busy or destroyed then
+            return
+        end
+        TweenService:Create(button, TweenInfo.new(0.12), { BackgroundColor3 = ACCENT }):Play()
+    end))
+    track(button.MouseButton1Down:Connect(function()
+        row.pressed = true
+        if row.busy or destroyed then
+            return
+        end
+        TweenService:Create(button, TweenInfo.new(0.08), { BackgroundColor3 = PRESS_BG }):Play()
+    end))
+    track(button.MouseButton1Up:Connect(function()
+        row.pressed = false
+        if row.busy or destroyed then
+            return
+        end
+        local target = ACCENT
+        if row.hovering then
+            target = MAUVE
+        end
+        TweenService:Create(button, TweenInfo.new(0.12), { BackgroundColor3 = target }):Play()
     end))
 end
 
