@@ -12412,6 +12412,7 @@ ApiImpl[106] = function(self, config)
             ["Quantum - Steal An Egg"] = "Quantum V1",
             ["Quantum V2 - Steal An Egg"] = "Quantum V2",
             ["Quantum V3 - Steal An Egg"] = "Quantum V3",
+            ["Quantum V4 - Steal An Egg"] = "Quantum V4",
         }
         local fullName = tostring(windowConfig.Name or "Quantum")
         local shortName = shortNames[fullName]

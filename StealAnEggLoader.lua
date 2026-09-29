@@ -7,6 +7,7 @@ local VERSIONS = {
     { Name = "V1", File = "StealAnEgg.deob.lua", Note = "Stable" },
     { Name = "V2", File = "StealAnEggV2.deob.lua", Note = "Latest" },
     { Name = "V3", File = "StealAnEggV3.deob.lua", Note = "Experimental" },
+    { Name = "V4", File = "StealAnEggV4.deob.lua", Note = "Newest" },
 }
 
 local BG = Color3.fromRGB(13, 7, 12)
@@ -95,7 +96,7 @@ card.AnchorPoint = Vector2.new(0.5, 0.5)
 card.BackgroundColor3 = CARD
 card.BorderSizePixel = 0
 card.Position = UDim2.fromScale(0.5, 0.5)
-card.Size = UDim2.fromOffset(320, 340)
+card.Size = UDim2.fromOffset(320, 408)
 card.Parent = screenGui
 
 local cardCorner = Instance.new("UICorner")
