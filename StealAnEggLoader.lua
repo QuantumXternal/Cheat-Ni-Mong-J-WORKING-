@@ -109,48 +109,53 @@ cardStroke.Color = STROKE
 cardStroke.Thickness = 1.5
 cardStroke.Parent = card
 
-local accentBar = Instance.new("Frame")
-accentBar.Name = "AccentBar"
-accentBar.BackgroundColor3 = ACCENT
-accentBar.BorderSizePixel = 0
-accentBar.Size = UDim2.new(1, 0, 0, 3)
-accentBar.Parent = card
-
-local accentCorner = Instance.new("UICorner")
-accentCorner.CornerRadius = UDim.new(0, 16)
-accentCorner.Parent = accentBar
+local divider = Instance.new("Frame")
+divider.Name = "Divider"
+divider.BackgroundColor3 = STROKE
+divider.BackgroundTransparency = 0.35
+divider.BorderSizePixel = 0
+divider.AnchorPoint = Vector2.new(0.5, 0)
+divider.Position = UDim2.new(0.5, 0, 0, 71)
+divider.Size = UDim2.new(1, -40, 0, 1)
+divider.Parent = card
 
 local title = Instance.new("TextLabel")
 title.Name = "Title"
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.GothamBold
-title.Position = UDim2.new(0, 0, 0, 18)
-title.Size = UDim2.new(1, 0, 0, 30)
+title.Position = UDim2.new(0, 20, 0, 16)
+title.Size = UDim2.new(1, -84, 0, 30)
 title.Text = "Quantum Version Loader"
 title.TextColor3 = TEXT
-title.TextSize = 20
+title.TextSize = 19
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.TextTruncate = Enum.TextTruncate.AtEnd
 title.Parent = card
 
 local subtitle = Instance.new("TextLabel")
 subtitle.Name = "Subtitle"
 subtitle.BackgroundTransparency = 1
 subtitle.Font = Enum.Font.GothamMedium
-subtitle.Position = UDim2.new(0, 0, 0, 48)
-subtitle.Size = UDim2.new(1, 0, 0, 20)
+subtitle.Position = UDim2.new(0, 20, 0, 46)
+subtitle.Size = UDim2.new(1, -84, 0, 18)
 subtitle.Text = "Choose version"
 subtitle.TextColor3 = MUTED
-subtitle.TextSize = 14
+subtitle.TextSize = 13
+subtitle.TextXAlignment = Enum.TextXAlignment.Left
+subtitle.TextTruncate = Enum.TextTruncate.AtEnd
 subtitle.Parent = card
 
 local status = Instance.new("TextLabel")
 status.Name = "Status"
 status.BackgroundTransparency = 1
 status.Font = Enum.Font.GothamMedium
-status.Position = UDim2.new(0, 0, 1, -30)
+status.Position = UDim2.new(0, 0, 1, -32)
 status.Size = UDim2.new(1, 0, 0, 20)
 status.Text = ""
 status.TextColor3 = MUTED
 status.TextSize = 13
+status.TextXAlignment = Enum.TextXAlignment.Center
+status.TextTruncate = Enum.TextTruncate.AtEnd
 status.Parent = card
 
 local closeButton = Instance.new("TextButton")
@@ -245,15 +250,15 @@ listFrame.Name = "VersionList"
 listFrame.BackgroundTransparency = 1
 listFrame.BorderSizePixel = 0
 listFrame.AnchorPoint = Vector2.new(0.5, 0)
-listFrame.Position = UDim2.new(0.5, 0, 0, 76)
-listFrame.Size = UDim2.new(1, -48, 1, -(76 + 36))
+listFrame.Position = UDim2.new(0.5, 0, 0, 78)
+listFrame.Size = UDim2.new(1, -40, 1, -(78 + 44))
 listFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
 listFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
 listFrame.ScrollingDirection = Enum.ScrollingDirection.Y
 listFrame.ScrollingEnabled = true
 listFrame.ScrollBarThickness = 4
 listFrame.ScrollBarImageColor3 = MAUVE
-listFrame.ScrollBarImageTransparency = 0.4
+listFrame.ScrollBarImageTransparency = 0.6
 listFrame.VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar
 listFrame.Parent = card
 
@@ -268,7 +273,7 @@ local ROW_PAD = 10
 local rowHeight = ROW_MIN
 do
     local count = math.max(#VERSIONS, 1)
-    local visibleH = 330 - 76 - 36
+    local visibleH = 330 - 78 - 44
     local fit = math.floor((visibleH - ROW_PAD * (count - 1)) / count)
     if fit > ROW_MIN then
         rowHeight = fit
@@ -350,7 +355,7 @@ for index, entry in ipairs(VERSIONS) do
     button.Parent = listFrame
 
     local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 12)
+    corner.CornerRadius = UDim.new(0, 10)
     corner.Parent = button
 
     local stroke = Instance.new("UIStroke")
@@ -370,6 +375,7 @@ for index, entry in ipairs(VERSIONS) do
     nameLabel.TextColor3 = TEXT
     nameLabel.TextSize = 16
     nameLabel.TextXAlignment = Enum.TextXAlignment.Left
+    nameLabel.TextTruncate = Enum.TextTruncate.AtEnd
     nameLabel.Parent = button
 
     local noteLabel = Instance.new("TextLabel")
@@ -383,6 +389,7 @@ for index, entry in ipairs(VERSIONS) do
     noteLabel.TextColor3 = MUTED
     noteLabel.TextSize = 12
     noteLabel.TextXAlignment = Enum.TextXAlignment.Left
+    noteLabel.TextTruncate = Enum.TextTruncate.AtEnd
     noteLabel.Parent = button
 
     local chevLabel = Instance.new("TextLabel")
