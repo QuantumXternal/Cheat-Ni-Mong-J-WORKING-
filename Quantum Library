@@ -889,32 +889,6 @@ launcherButtonsAspect.AspectType = sourceButtonsAspect and sourceButtonsAspect.A
 launcherButtonsAspect.DominantAxis = sourceButtonsAspect and sourceButtonsAspect.DominantAxis or Enum.DominantAxis.Width
 launcherButtonsAspect.Parent = launcherButtons
 
-local openerScale = Instance.new("UIScale")
-openerScale.Name = "QuantumOpenerScale"
-openerScale.Scale = 1
-openerScale.Parent = launcherButtons
-local lastOpenerScale = 1
-local function applyOpenerScale()
-    if not launcherButtons.Parent then
-        return
-    end
-    local factor = 1
-    pcall(function()
-        local genv = typeof(getgenv) == "function" and getgenv() or _G
-        local value = tonumber(genv.QuantumOpenerScale)
-        if value then
-            factor = math.clamp(value, 0.5, 1.5)
-        end
-    end)
-    if factor ~= lastOpenerScale then
-        lastOpenerScale = factor
-        openerScale.Scale = factor
-    end
-end
-trackRootConnection(RunService.RenderStepped:Connect(function()
-    pcall(applyOpenerScale)
-end))
-
 local quantumButton = Instance.new("ImageButton")
 quantumButton.Name = "Quantum"
 quantumButton.AnchorPoint = Vector2.new(0.5, 0.5)
