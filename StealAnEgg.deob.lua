@@ -27258,7 +27258,7 @@ do
 		Position = UDim2.fromScale(0.5, 0.5),
 		Size = UDim2.fromScale(0.86, 0.86),
 		BackgroundTransparency = 1,
-		Image = "rbxassetid://134913601358274",
+		Image = "rbxassetid://131276117949451",
 		ImageTransparency = 0.35,
 		ScaleType = Enum.ScaleType.Crop,
 		ZIndex = 3,
@@ -28327,7 +28327,7 @@ v10 = v2:CreateTab({ Name = "Discord", Side = "Right", SectionsExpanded = true }
 local str
 str = "discord.gg/DvjFNyyjuH"
 local str2
-str2 = "rbxassetid://134913601358274"
+str2 = "rbxassetid://131276117949451"
 
 do
 	local n5 = 0.5
@@ -28667,7 +28667,7 @@ do
 end
 
 do
-	local image = "rbxassetid://134913601358274"
+	local image = "rbxassetid://131276117949451"
 	local n5 = 56
 	local n6 = 0.035
 	local n7 = 8
