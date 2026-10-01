@@ -26,28 +26,26 @@ local function applyGlass(surface)
     end
     surface:SetAttribute("QuantumGlassApplied", true)
     surface.BackgroundTransparency = GLASS_TRANSPARENCY
-    if surface:IsA("CanvasGroup") then
-        -- CanvasGroup flattens its whole subtree before compositing, so an
-        -- alpha-bearing UIGradient would multiply across every child (text,
-        -- buttons) instead of tinting only the fill. Frost on groups comes
-        -- from translucency + inner stroke + shadow only. Never re-add a
-        -- gradient here.
-        local innerOnly = Instance.new("UIStroke")
-        innerOnly.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-        innerOnly.Color = Color3.new(1, 1, 1)
-        innerOnly.Transparency = 0.65
-        innerOnly.Thickness = 1
-        innerOnly.Parent = surface
-        return
+    -- A TextButton renders its own .Text through the same pass as its fill,
+    -- so an alpha-bearing UIGradient would fade its label along with the
+    -- background (version rows are safe: their text lives in child labels,
+    -- but Yes/No draw "Yes"/"No" via .Text). Skip the sheen there.
+    -- Same for CanvasGroup: it flattens its whole subtree before
+    -- compositing, so a gradient would multiply across every child (text,
+    -- buttons) instead of tinting only the fill. Frost on groups comes
+    -- from translucency + inner stroke + shadow only. Never re-add a
+    -- gradient to either case.
+    local hasOwnText = surface:IsA("TextButton") and surface.Text ~= nil and surface.Text ~= ""
+    if not hasOwnText and not surface:IsA("CanvasGroup") then
+        local sheenG = Instance.new("UIGradient")
+        sheenG.Rotation = 90
+        sheenG.Color = ColorSequence.new(Color3.new(1, 1, 1))
+        sheenG.Transparency = NumberSequence.new({
+            NumberSequenceKeypoint.new(0, 0.88),
+            NumberSequenceKeypoint.new(1, 1),
+        })
+        sheenG.Parent = surface
     end
-    local sheenG = Instance.new("UIGradient")
-    sheenG.Rotation = 90
-    sheenG.Color = ColorSequence.new(Color3.new(1, 1, 1))
-    sheenG.Transparency = NumberSequence.new({
-        NumberSequenceKeypoint.new(0, 0.88),
-        NumberSequenceKeypoint.new(1, 1),
-    })
-    sheenG.Parent = surface
     local inner = Instance.new("UIStroke")
     inner.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
     inner.Color = Color3.new(1, 1, 1)
@@ -713,7 +711,7 @@ local function openModal()
     yesButton.Size = UDim2.new(0.5, -18, 0, 36)
     yesButton.Font = Enum.Font.GothamBold
     yesButton.Text = "Yes"
-    yesButton.TextColor3 = TEXT
+    yesButton.TextColor3 = Color3.new(1, 1, 1)
     yesButton.TextSize = 17
     yesButton.TextTransparency = 0
     yesButton.Parent = group
@@ -740,7 +738,7 @@ local function openModal()
     noButton.Size = UDim2.new(0.5, -18, 0, 36)
     noButton.Font = Enum.Font.GothamBold
     noButton.Text = "No"
-    noButton.TextColor3 = TEXT
+    noButton.TextColor3 = Color3.new(1, 1, 1)
     noButton.TextSize = 17
     noButton.TextTransparency = 0
     noButton.Parent = group
