@@ -4,7 +4,7 @@ local CoreGui = game:GetService("CoreGui")
 
 local INVITE_URL = "https://discord.gg/DvjFNyyjuH"
 local INVITE_TEXT = "discord.gg/DvjFNyyjuH"
-local LOGO_IMAGE = "rbxassetid://128961717706452"
+local LOGO_IMAGE = "rbxassetid://134913601358274"
 local TITLE_TEXT = "Quantum Xternal"
 local SUBTITLE_TEXT = "Join the official Discord server"
 local BODY_TEXT = "New scripts, patch notes and giveaways land there first."
