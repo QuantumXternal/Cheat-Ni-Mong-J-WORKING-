@@ -26,6 +26,20 @@ local function applyGlass(surface)
     end
     surface:SetAttribute("QuantumGlassApplied", true)
     surface.BackgroundTransparency = GLASS_TRANSPARENCY
+    if surface:IsA("CanvasGroup") then
+        -- CanvasGroup flattens its whole subtree before compositing, so an
+        -- alpha-bearing UIGradient would multiply across every child (text,
+        -- buttons) instead of tinting only the fill. Frost on groups comes
+        -- from translucency + inner stroke + shadow only. Never re-add a
+        -- gradient here.
+        local innerOnly = Instance.new("UIStroke")
+        innerOnly.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+        innerOnly.Color = Color3.new(1, 1, 1)
+        innerOnly.Transparency = 0.65
+        innerOnly.Thickness = 1
+        innerOnly.Parent = surface
+        return
+    end
     local sheenG = Instance.new("UIGradient")
     sheenG.Rotation = 90
     sheenG.Color = ColorSequence.new(Color3.new(1, 1, 1))
