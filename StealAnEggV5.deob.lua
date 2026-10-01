@@ -29806,6 +29806,21 @@ v14:CreateSlider({
 	end,
 })
 
+v14:CreateSlider({
+	Name = "Opener Size",
+	Min = 50,
+	Max = 150,
+	Default = 100,
+	AllowDecimals = false,
+	Increment = 1,
+	Unit = "%",
+	Callback = function(arg)
+		local factor = math.clamp((tonumber(arg) or 100) / 100, 0.5, 1.5)
+		local genv = typeof(getgenv) == "function" and getgenv() or _G
+		genv.QuantumOpenerScale = factor
+	end,
+})
+
 do
 	local Lighting = game:GetService("Lighting")
 	local n13 = 0.003
