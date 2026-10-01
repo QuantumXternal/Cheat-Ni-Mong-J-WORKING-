@@ -53,6 +53,20 @@ end)
 local connections = {}
 local destroyed = false
 
+local blurEffect = nil
+pcall(function()
+    local lighting = game:GetService("Lighting")
+    local old = lighting:FindFirstChild("QuantumLoaderBlur")
+    if old then
+        old:Destroy()
+    end
+    local blur = Instance.new("BlurEffect")
+    blur.Name = "QuantumLoaderBlur"
+    blur.Size = 8
+    blur.Parent = lighting
+    blurEffect = blur
+end)
+
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "QuantumVersionLoader"
 screenGui.ResetOnSpawn = false
@@ -77,6 +91,12 @@ local function destroy()
     end
     table.clear(connections)
     pcall(function()
+        if blurEffect ~= nil then
+            blurEffect:Destroy()
+        end
+        blurEffect = nil
+    end)
+    pcall(function()
         screenGui:Destroy()
     end)
 end
@@ -85,7 +105,7 @@ local backdrop = Instance.new("TextButton")
 backdrop.Name = "Backdrop"
 backdrop.AutoButtonColor = false
 backdrop.BackgroundColor3 = Color3.new(0, 0, 0)
-backdrop.BackgroundTransparency = 0.45
+backdrop.BackgroundTransparency = 0.3
 backdrop.BorderSizePixel = 0
 backdrop.Size = UDim2.fromScale(1, 1)
 backdrop.Text = ""
@@ -95,6 +115,7 @@ local card = Instance.new("Frame")
 card.Name = "Card"
 card.AnchorPoint = Vector2.new(0.5, 0.5)
 card.BackgroundColor3 = CARD
+card.BackgroundTransparency = 0.2
 card.BorderSizePixel = 0
 card.Position = UDim2.fromScale(0.5, 0.5)
 card.Size = UDim2.fromOffset(300, 330)
@@ -109,6 +130,50 @@ cardStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 cardStroke.Color = STROKE
 cardStroke.Thickness = 1.5
 cardStroke.Parent = card
+
+local innerStroke = Instance.new("UIStroke")
+innerStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+innerStroke.Color = Color3.new(1, 1, 1)
+innerStroke.Transparency = 0.65
+innerStroke.Thickness = 1
+innerStroke.Parent = card
+
+local sheen = Instance.new("UIGradient")
+sheen.Rotation = 90
+sheen.Color = ColorSequence.new(Color3.new(1, 1, 1))
+sheen.Transparency = NumberSequence.new({
+    NumberSequenceKeypoint.new(0, 0.88),
+    NumberSequenceKeypoint.new(1, 1),
+})
+sheen.Parent = card
+
+local shadowBack = Instance.new("Frame")
+shadowBack.Name = "ShadowBack"
+shadowBack.BackgroundColor3 = Color3.new(0, 0, 0)
+shadowBack.BackgroundTransparency = 0.85
+shadowBack.BorderSizePixel = 0
+shadowBack.Position = UDim2.new(0, 0, 0, 8)
+shadowBack.Size = UDim2.new(1, 0, 1, 0)
+shadowBack.ZIndex = 0
+shadowBack.Parent = card
+
+local shadowBackCorner = Instance.new("UICorner")
+shadowBackCorner.CornerRadius = UDim.new(0, 16)
+shadowBackCorner.Parent = shadowBack
+
+local shadowFront = Instance.new("Frame")
+shadowFront.Name = "ShadowFront"
+shadowFront.BackgroundColor3 = Color3.new(0, 0, 0)
+shadowFront.BackgroundTransparency = 0.75
+shadowFront.BorderSizePixel = 0
+shadowFront.Position = UDim2.new(0, 0, 0, 4)
+shadowFront.Size = UDim2.new(1, 0, 1, 0)
+shadowFront.ZIndex = 0
+shadowFront.Parent = card
+
+local shadowFrontCorner = Instance.new("UICorner")
+shadowFrontCorner.CornerRadius = UDim.new(0, 16)
+shadowFrontCorner.Parent = shadowFront
 
 local divider = Instance.new("Frame")
 divider.Name = "Divider"
@@ -257,11 +322,44 @@ listFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
 listFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
 listFrame.ScrollingDirection = Enum.ScrollingDirection.Y
 listFrame.ScrollingEnabled = true
-listFrame.ScrollBarThickness = 4
-listFrame.ScrollBarImageColor3 = MAUVE
-listFrame.ScrollBarImageTransparency = 0.6
+listFrame.ScrollBarThickness = 8
+listFrame.ScrollBarImageColor3 = ACCENT
+listFrame.ScrollBarImageTransparency = 0
 listFrame.VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar
 listFrame.Parent = card
+
+local listPadding = Instance.new("UIPadding")
+listPadding.PaddingRight = UDim.new(0, 14)
+listPadding.Parent = listFrame
+
+local scrollTrack = Instance.new("Frame")
+scrollTrack.Name = "ScrollTrack"
+scrollTrack.AnchorPoint = Vector2.new(1, 0)
+scrollTrack.BackgroundColor3 = Color3.new(0, 0, 0)
+scrollTrack.BackgroundTransparency = 0.5
+scrollTrack.BorderSizePixel = 0
+scrollTrack.Position = UDim2.new(1, -20, 0, 78)
+scrollTrack.Size = UDim2.new(0, 8, 1, -(78 + 44))
+scrollTrack.ZIndex = 0
+scrollTrack.Parent = card
+
+local scrollTrackCorner = Instance.new("UICorner")
+scrollTrackCorner.CornerRadius = UDim.new(1, 0)
+scrollTrackCorner.Parent = scrollTrack
+
+track(listFrame.MouseEnter:Connect(function()
+    if destroyed then
+        return
+    end
+    TweenService:Create(listFrame, TweenInfo.new(0.15), { ScrollBarThickness = 10 }):Play()
+end))
+
+track(listFrame.MouseLeave:Connect(function()
+    if destroyed then
+        return
+    end
+    TweenService:Create(listFrame, TweenInfo.new(0.15), { ScrollBarThickness = 8 }):Play()
+end))
 
 local listLayout = Instance.new("UIListLayout")
 listLayout.FillDirection = Enum.FillDirection.Vertical
@@ -455,8 +553,167 @@ for index, entry in ipairs(VERSIONS) do
     end))
 end
 
+local modalVeil = nil
+local modalCard = nil
+
+local function closeModal()
+    if modalVeil == nil then
+        return
+    end
+    local veil = modalVeil
+    local group = modalCard
+    modalVeil = nil
+    modalCard = nil
+    if destroyed then
+        pcall(function()
+            veil:Destroy()
+        end)
+        return
+    end
+    if group ~= nil then
+        local outTween = TweenService:Create(group, TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { GroupTransparency = 1 })
+        outTween:Play()
+        task.spawn(function()
+            outTween.Completed:Wait()
+            if destroyed then
+                return
+            end
+            pcall(function()
+                veil:Destroy()
+            end)
+        end)
+    else
+        pcall(function()
+            veil:Destroy()
+        end)
+    end
+end
+
+local function openModal()
+    if destroyed or modalVeil ~= nil then
+        return
+    end
+    local veil = Instance.new("TextButton")
+    veil.Name = "ExitVeil"
+    veil.AutoButtonColor = false
+    veil.BackgroundColor3 = Color3.new(0, 0, 0)
+    veil.BackgroundTransparency = 0.4
+    veil.BorderSizePixel = 0
+    veil.Size = UDim2.fromScale(1, 1)
+    veil.Text = ""
+    veil.Active = true
+    veil.ZIndex = 50
+    veil.Parent = screenGui
+
+    local group = Instance.new("CanvasGroup")
+    group.Name = "ExitModal"
+    group.AnchorPoint = Vector2.new(0.5, 0.5)
+    group.BackgroundColor3 = CARD
+    group.BorderSizePixel = 0
+    group.Position = UDim2.fromScale(0.5, 0.5)
+    group.Size = UDim2.fromOffset(240, 170)
+    group.GroupTransparency = 1
+    group.ZIndex = 51
+    group.Parent = veil
+
+    local groupCorner = Instance.new("UICorner")
+    groupCorner.CornerRadius = UDim.new(0, 14)
+    groupCorner.Parent = group
+
+    local groupStroke = Instance.new("UIStroke")
+    groupStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    groupStroke.Color = STROKE
+    groupStroke.Thickness = 1.5
+    groupStroke.Parent = group
+
+    local groupScale = Instance.new("UIScale")
+    groupScale.Scale = 0.95
+    groupScale.Parent = group
+
+    local headline = Instance.new("TextLabel")
+    headline.Name = "Headline"
+    headline.BackgroundTransparency = 1
+    headline.Position = UDim2.new(0, 16, 0, 14)
+    headline.Size = UDim2.new(1, -32, 0, 56)
+    headline.Font = Enum.Font.GothamBold
+    headline.Text = "Are you sure you want to exit Quantum Loader?"
+    headline.TextColor3 = TEXT
+    headline.TextSize = 15
+    headline.TextWrapped = true
+    headline.TextXAlignment = Enum.TextXAlignment.Center
+    headline.TextYAlignment = Enum.TextYAlignment.Center
+    headline.Parent = group
+
+    local explainer = Instance.new("TextLabel")
+    explainer.Name = "Explainer"
+    explainer.BackgroundTransparency = 1
+    explainer.Position = UDim2.new(0, 16, 0, 72)
+    explainer.Size = UDim2.new(1, -32, 0, 18)
+    explainer.Font = Enum.Font.GothamMedium
+    explainer.Text = "The loader will close and no version will load."
+    explainer.TextColor3 = MUTED
+    explainer.TextSize = 12
+    explainer.TextWrapped = true
+    explainer.TextXAlignment = Enum.TextXAlignment.Center
+    explainer.Parent = group
+
+    local yesButton = Instance.new("TextButton")
+    yesButton.Name = "Yes"
+    yesButton.AutoButtonColor = false
+    yesButton.BackgroundColor3 = ACCENT
+    yesButton.BorderSizePixel = 0
+    yesButton.AnchorPoint = Vector2.new(0, 1)
+    yesButton.Position = UDim2.new(0, 12, 1, -12)
+    yesButton.Size = UDim2.new(0.5, -18, 0, 36)
+    yesButton.Font = Enum.Font.GothamBold
+    yesButton.Text = "Yes"
+    yesButton.TextColor3 = TEXT
+    yesButton.TextSize = 15
+    yesButton.Parent = group
+
+    local yesCorner = Instance.new("UICorner")
+    yesCorner.CornerRadius = UDim.new(0, 10)
+    yesCorner.Parent = yesButton
+
+    local noButton = Instance.new("TextButton")
+    noButton.Name = "No"
+    noButton.AutoButtonColor = false
+    noButton.BackgroundTransparency = 1
+    noButton.BorderSizePixel = 0
+    noButton.AnchorPoint = Vector2.new(1, 1)
+    noButton.Position = UDim2.new(1, -12, 1, -12)
+    noButton.Size = UDim2.new(0.5, -18, 0, 36)
+    noButton.Font = Enum.Font.GothamBold
+    noButton.Text = "No"
+    noButton.TextColor3 = TEXT
+    noButton.TextSize = 15
+    noButton.Parent = group
+
+    local noCorner = Instance.new("UICorner")
+    noCorner.CornerRadius = UDim.new(0, 10)
+    noCorner.Parent = noButton
+
+    local noStroke = Instance.new("UIStroke")
+    noStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    noStroke.Color = MAUVE
+    noStroke.Thickness = 1.5
+    noStroke.Parent = noButton
+
+    track(yesButton.Activated:Connect(function()
+        destroy()
+    end))
+    track(noButton.Activated:Connect(function()
+        closeModal()
+    end))
+
+    modalVeil = veil
+    modalCard = group
+    TweenService:Create(group, TweenInfo.new(0.22, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { GroupTransparency = 0 }):Play()
+    TweenService:Create(groupScale, TweenInfo.new(0.22, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { Scale = 1 }):Play()
+end
+
 track(closeButton.Activated:Connect(function()
-    destroy()
+    openModal()
 end))
 
 screenGui.Parent = parent
