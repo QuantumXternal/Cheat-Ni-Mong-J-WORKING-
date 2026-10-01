@@ -19,6 +19,29 @@ local TEXT = Color3.fromRGB(255, 240, 245)
 local MUTED = Color3.fromRGB(196, 154, 168)
 local STROKE = Color3.fromRGB(74, 26, 46)
 
+local GLASS_TRANSPARENCY = 0.2
+local function applyGlass(surface)
+    if surface:GetAttribute("QuantumGlassApplied") == true then
+        return
+    end
+    surface:SetAttribute("QuantumGlassApplied", true)
+    surface.BackgroundTransparency = GLASS_TRANSPARENCY
+    local sheenG = Instance.new("UIGradient")
+    sheenG.Rotation = 90
+    sheenG.Color = ColorSequence.new(Color3.new(1, 1, 1))
+    sheenG.Transparency = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0.88),
+        NumberSequenceKeypoint.new(1, 1),
+    })
+    sheenG.Parent = surface
+    local inner = Instance.new("UIStroke")
+    inner.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    inner.Color = Color3.new(1, 1, 1)
+    inner.Transparency = 0.65
+    inner.Thickness = 1
+    inner.Parent = surface
+end
+
 local function resolveParent()
     if typeof(gethui) == "function" then
         local ok, result = pcall(gethui)
@@ -115,7 +138,6 @@ local card = Instance.new("Frame")
 card.Name = "Card"
 card.AnchorPoint = Vector2.new(0.5, 0.5)
 card.BackgroundColor3 = CARD
-card.BackgroundTransparency = 0.2
 card.BorderSizePixel = 0
 card.Position = UDim2.fromScale(0.5, 0.5)
 card.Size = UDim2.fromOffset(300, 330)
@@ -131,21 +153,7 @@ cardStroke.Color = STROKE
 cardStroke.Thickness = 1.5
 cardStroke.Parent = card
 
-local innerStroke = Instance.new("UIStroke")
-innerStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-innerStroke.Color = Color3.new(1, 1, 1)
-innerStroke.Transparency = 0.65
-innerStroke.Thickness = 1
-innerStroke.Parent = card
-
-local sheen = Instance.new("UIGradient")
-sheen.Rotation = 90
-sheen.Color = ColorSequence.new(Color3.new(1, 1, 1))
-sheen.Transparency = NumberSequence.new({
-    NumberSequenceKeypoint.new(0, 0.88),
-    NumberSequenceKeypoint.new(1, 1),
-})
-sheen.Parent = card
+applyGlass(card)
 
 local shadowBack = Instance.new("Frame")
 shadowBack.Name = "ShadowBack"
@@ -463,6 +471,8 @@ for index, entry in ipairs(VERSIONS) do
     stroke.Thickness = 1
     stroke.Parent = button
 
+    applyGlass(button)
+
     local nameLabel = Instance.new("TextLabel")
     nameLabel.Name = "Name"
     nameLabel.BackgroundTransparency = 1
@@ -626,6 +636,22 @@ local function openModal()
     groupStroke.Thickness = 1.5
     groupStroke.Parent = group
 
+    applyGlass(group)
+
+    local modalShadow = Instance.new("Frame")
+    modalShadow.Name = "Shadow"
+    modalShadow.BackgroundColor3 = Color3.new(0, 0, 0)
+    modalShadow.BackgroundTransparency = 0.8
+    modalShadow.BorderSizePixel = 0
+    modalShadow.Position = UDim2.new(0, 0, 0, 5)
+    modalShadow.Size = UDim2.new(1, 0, 1, 0)
+    modalShadow.ZIndex = 0
+    modalShadow.Parent = group
+
+    local modalShadowCorner = Instance.new("UICorner")
+    modalShadowCorner.CornerRadius = UDim.new(0, 14)
+    modalShadowCorner.Parent = modalShadow
+
     local groupScale = Instance.new("UIScale")
     groupScale.Scale = 0.95
     groupScale.Parent = group
@@ -675,10 +701,12 @@ local function openModal()
     yesCorner.CornerRadius = UDim.new(0, 10)
     yesCorner.Parent = yesButton
 
+    applyGlass(yesButton)
+
     local noButton = Instance.new("TextButton")
     noButton.Name = "No"
     noButton.AutoButtonColor = false
-    noButton.BackgroundTransparency = 1
+    noButton.BackgroundColor3 = CARD
     noButton.BorderSizePixel = 0
     noButton.AnchorPoint = Vector2.new(1, 1)
     noButton.Position = UDim2.new(1, -12, 1, -12)
@@ -698,6 +726,8 @@ local function openModal()
     noStroke.Color = MAUVE
     noStroke.Thickness = 1.5
     noStroke.Parent = noButton
+
+    applyGlass(noButton)
 
     track(yesButton.Activated:Connect(function()
         destroy()
