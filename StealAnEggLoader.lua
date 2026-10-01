@@ -704,7 +704,7 @@ local function openModal()
     local yesButton = Instance.new("TextButton")
     yesButton.Name = "Yes"
     yesButton.AutoButtonColor = false
-    yesButton.BackgroundColor3 = ACCENT
+    yesButton.BackgroundColor3 = Color3.fromRGB(150, 25, 63)
     yesButton.BorderSizePixel = 0
     yesButton.AnchorPoint = Vector2.new(0, 1)
     yesButton.Position = UDim2.new(0, 12, 1, -12)
