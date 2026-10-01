@@ -337,6 +337,9 @@ listFrame.VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar
 listFrame.Parent = card
 
 local listPadding = Instance.new("UIPadding")
+listPadding.PaddingTop = UDim.new(0, 5)
+listPadding.PaddingBottom = UDim.new(0, 5)
+listPadding.PaddingLeft = UDim.new(0, 5)
 listPadding.PaddingRight = UDim.new(0, 14)
 listPadding.Parent = listFrame
 
@@ -380,7 +383,7 @@ local ROW_PAD = 10
 local rowHeight = ROW_MIN
 do
     local count = math.max(#VERSIONS, 1)
-    local visibleH = 330 - 78 - 44
+    local visibleH = 330 - 78 - 44 - 5 - 5
     local fit = math.floor((visibleH - ROW_PAD * (count - 1)) / count)
     if fit > ROW_MIN then
         rowHeight = fit
@@ -637,6 +640,7 @@ local function openModal()
     groupStroke.Parent = group
 
     applyGlass(group)
+    group.BackgroundTransparency = 0.12
 
     local modalShadow = Instance.new("Frame")
     modalShadow.Name = "Shadow"
@@ -668,6 +672,7 @@ local function openModal()
     headline.TextWrapped = true
     headline.TextXAlignment = Enum.TextXAlignment.Center
     headline.TextYAlignment = Enum.TextYAlignment.Center
+    headline.TextTransparency = 0
     headline.Parent = group
 
     local explainer = Instance.new("TextLabel")
@@ -681,6 +686,7 @@ local function openModal()
     explainer.TextSize = 12
     explainer.TextWrapped = true
     explainer.TextXAlignment = Enum.TextXAlignment.Center
+    explainer.TextTransparency = 0
     explainer.Parent = group
 
     local yesButton = Instance.new("TextButton")
@@ -695,6 +701,7 @@ local function openModal()
     yesButton.Text = "Yes"
     yesButton.TextColor3 = TEXT
     yesButton.TextSize = 15
+    yesButton.TextTransparency = 0
     yesButton.Parent = group
 
     local yesCorner = Instance.new("UICorner")
@@ -702,6 +709,12 @@ local function openModal()
     yesCorner.Parent = yesButton
 
     applyGlass(yesButton)
+
+    local yesStroke = Instance.new("UIStroke")
+    yesStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    yesStroke.Color = STROKE
+    yesStroke.Thickness = 1
+    yesStroke.Parent = yesButton
 
     local noButton = Instance.new("TextButton")
     noButton.Name = "No"
@@ -715,6 +728,7 @@ local function openModal()
     noButton.Text = "No"
     noButton.TextColor3 = TEXT
     noButton.TextSize = 15
+    noButton.TextTransparency = 0
     noButton.Parent = group
 
     local noCorner = Instance.new("UICorner")
@@ -738,7 +752,7 @@ local function openModal()
 
     modalVeil = veil
     modalCard = group
-    TweenService:Create(group, TweenInfo.new(0.22, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { GroupTransparency = 0 }):Play()
+    TweenService:Create(group, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { GroupTransparency = 0 }):Play()
     TweenService:Create(groupScale, TweenInfo.new(0.22, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { Scale = 1 }):Play()
 end
 
