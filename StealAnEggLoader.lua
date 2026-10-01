@@ -714,7 +714,7 @@ local function openModal()
     yesButton.Font = Enum.Font.GothamBold
     yesButton.Text = "Yes"
     yesButton.TextColor3 = TEXT
-    yesButton.TextSize = 15
+    yesButton.TextSize = 17
     yesButton.TextTransparency = 0
     yesButton.Parent = group
 
@@ -741,7 +741,7 @@ local function openModal()
     noButton.Font = Enum.Font.GothamBold
     noButton.Text = "No"
     noButton.TextColor3 = TEXT
-    noButton.TextSize = 15
+    noButton.TextSize = 17
     noButton.TextTransparency = 0
     noButton.Parent = group
 
