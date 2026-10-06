@@ -9,6 +9,7 @@ local VERSIONS = {
     { Name = "V3", File = "StealAnEggV3.deob.lua", Note = "Experimental" },
     { Name = "V4", File = "StealAnEggV4.deob.lua", Note = "Newest" },
     { Name = "V5", File = "StealAnEggV5.deob.lua", Note = "Beta" },
+    { Name = "V6", File = "StealAnEggV6.deob.lua", Note = "Alpha" },
 }
 
 local BG = Color3.fromRGB(13, 7, 12)
